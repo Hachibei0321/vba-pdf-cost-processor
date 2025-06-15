@@ -3,12 +3,7 @@
 ' 作成者：関西のおばちゃん
 ' 作成日：2025/06/15
 ' 概要：任意のPDFファイルを選択してパワークエリで読み込むで〜♪
-' 
-' 処理フロー：
-' 1. ファイル選択ダイアログで任意のPDFファイルを選ぶ
-' 2. パワークエリで動的にPDF接続を作成
-' 3. Table001とTable002を自動生成
-' 4. 各テーブルを別々のワークシートに配置
+' 修正：End Sub抜け修正済み
 ' ===============================================
 
 Option Explicit
@@ -117,8 +112,6 @@ Sub PDFをパワークエリで読み込み(pdfFilePath As String)
     
     Dim wb As Workbook
     Dim ws As Worksheet
-    Dim queryTable As QueryTable
-    Dim connectionString As String
     
     ' エラーハンドリング
     On Error GoTo PowerQueryError
@@ -129,20 +122,10 @@ Sub PDFをパワークエリで読み込み(pdfFilePath As String)
     Set ws = 取得または作成ワークシート("PDFデータ")
     ws.Cells.Clear  ' 既存データをクリア
     
-    ' パワークエリでPDFを読み込む（Excel 2016以降の方法）
-    ' 注意：この部分は環境によって調整が必要やで〜
-    
-    ' データ→新しいクエリ→ファイルから→PDFからと同じ処理をVBAで実行
-    Dim pqConnection As WorkbookConnection
-    
     ' 既存のPDF接続があったら削除
     Call 既存PDF接続削除()
     
-    ' 新しいPDF接続を作成
-    connectionString = "OLEDB;Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" & pdfFilePath & ";Extended Properties=""PDF HDR=YES;"""
-    
-    ' パワークエリでPDF読み込み（簡易版）
-    ' 実際にはもっと複雑な処理が必要やけど、基本的な読み込みを実装
+    ' パワークエリでPDF読み込み（手動設定方式）
     Call PDFファイル読み込み実行(pdfFilePath, ws)
     
     Debug.Print "PDFファイルの読み込み完了：" & pdfFilePath
@@ -160,10 +143,6 @@ Sub PDFファイル読み込み実行(pdfPath As String, targetWS As Worksheet)
     ' PDFファイルを実際に読み込む処理
     ' ここはExcelのバージョンによって方法が変わるで〜
     ' -----------------------------------------------
-    
-    ' 方法1：データ→クエリと接続→データの取得→ファイルから→PDFから
-    ' この処理をVBAで実行するのは複雑やから、
-    ' まずは手動でパワークエリ設定を促す方法を採用
     
     Dim response As VbMsgBoxResult
     
